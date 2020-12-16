@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Olympic Data Analysis</title>
+    <style>
+        #tableucontainer {
+            height:1000;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        /* ADD CSS FOR #sliderContainer */
+        #sliderContainer {
+            text-align: center;
+            position: relative;
+        }
+
+        .tooltip {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 5px;
+
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        .top-buffer {
+            margin-top: 20px;
+        }
+    </style>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Tableau Data -->
+        <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+
+        <!-- D3 -->
+        <script src="http://d3js.org/d3.v4.js"></script>
+        <!-- D3 Chromatic -->
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+        <!-- D3 Geo Projection -->
+        <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+    </head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <!-- <li class="nav-item">
+          <a class="nav-link active" id="graph1-tab" data-toggle="tab" href="#graph1" role="tab" aria-controls="graph1"
+            aria-selected="true">About and Graph 1</a>
+        </li> -->
+                <li class="nav-item">
+                    <a class="nav-link active" id="Overview-tab" data-toggle="tab" href="#overview" role="tab"
+                        aria-controls="Overview" aria-selected="false">Overview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2"
+                        aria-selected="false">Participation & Performance of Women</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab3-tab" data-toggle="tab" href="#tab3" role="tab" aria-controls="tab3"
+                        aria-selected="false">Participation & Performance of Countries</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab4-tab" data-toggle="tab" href="#tab4" role="tab" aria-controls="tab4"
+                        aria-selected="false">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <main>
+
+        <div class="container-fluid">
+            <div class="row top-buffer"></div>
+            <h1 class="display-6">Analysis of Athletes and Leading Countries in Olympic Games (1896
+                to 2016)</h1>
+        </div>
+        <div class="container ">
+
+
+            <div class="tab-content" id="myTabContent">
+
+                <!-- Overview Tab -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="graph1-tab">
+                    <div class="container ">
+                        <div class="row top-buffer"></div>
+                        <div class=" col-md-12">
+
+
+                            <figure class="text-center">
+                                <blockquote class="blockquote">
+                                    <p class="lead">DATS 6401–Visualization of Complex Data </p>
+                                </blockquote>
+                                <footer class="blockquote-footer"><cite title="Source Title"> Instructor: Nima
+                                        Zahadat, Ph.D </cite>.</footer>
+                                <footer class="blockquote-footer"><cite title="Source Title"> By Madhuri Yadav</cite>.
+                                </footer>
+
+                            </figure>
+
+                        </div>
+                        <!-- map -->
+                        <div class=" col-md-12">
+                            <svg id="my_dataviz" width="900" height="500"></svg>
+                        </div>
+                        <div class="row top-buffer" align='center'></div>
+                        <!-- TimeSlider -->
+                        <div class=" col-md-12">
+                            <div id="sliderContainer">
+                                <input id="timeslide" type="range" min="0" max="21" value="21" step="1" /><br>
+                                <span id="range">2016</span>
+                            </div>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="season_switch">
+                                <label class="custom-control-label" for="season_switch">Summer/Winter</label>
+                            </div>
+                            <div class="row top-buffer" align='center'></div>
+                        </div>
+                        <!-- Tableau Line Chart -->
+                        <div class=" col-md-12">
+                            <div id="linegraph" class="tableucontainer"></div>
+                        </div>
+                        <div class="row top-buffer" align='center'></div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    Key Takeaway
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">From all the above graphs we conclude that there is overall
+                                        increase in the number of
+                                        events and participating countries and athletes for both summer and winter
+                                        Olympic events.</p>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row top-buffer" align='center'></div>
+                        <div class="row top-buffer" align='center'></div>
+                    </div>
+                </div>
+                <!-- Tab2 -->
+                <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                    <div class="container ">
+                        <div class=" col-md-12">
+                            <div class="card-body">
+                                <p class="card-text">In this section we study the evolution in the participation and
+                                    performance of women.</p>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Following the stacked bar chart showing the male and female
+                                    participants in Olympic games over
+                                    years we see there is constant increase in the female participants. Around 23
+                                    women
+                                    i.e. 2% to that of men participated
+                                    in the year 1900 where as the percentage has been increased to 45% to that of
+                                    male
+                                    participants. We see a gap in 1916,
+                                    1940 & 1944 as the events were canceled because of World War I and World War II.
+                                </p>
+                            </div>
+                            <div id="bargraph1" class="tableucontainer"></div>
+                        </div>
+                    </div>
+                    <div class="container ">
+                        <div class=" col-md-12">
+                            <div class="card-body">
+                                <p class="card-text">The Bar graph below shows the count and the types of medals won
+                                    by
+                                    male and women
+                                    participants in the Olympic events. It is observed that around 47% of medals
+                                    were
+                                    won by women with 45% of
+                                    participation rate with that of male athletes. </p>
+                            </div>
+                            <div id="bargraph2" class="tableucontainer"></div>
+                        </div>
+                        <div class="row top-buffer" align='center'>
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Key Takeaway
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">From both the bar graphs above we conclude that the
+                                            rate of
+                                            participation and the
+                                            performance of women has been continuously increasing and has reached
+                                            45-47%
+                                            of the male participants.</p>
+                                    </div>
+                                </div>
+                                <div class="row top-buffer" align='center'></div>
+                                <div class="row top-buffer" align='center'></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab3 -->
+                <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+                    <div class="container ">
+                        <div class=" col-md-12">
+                            <p class="card-text"> In this section we analyze the performance of the countries
+                                participating in the Olympic events.
+                                And the types of the events conducted in Olympics. </p>
+                            <p class="card-text">The Pie chart below shows the maximum number of medal won in each
+                                events conducted in summer and winter. </p>
+                            <div id="piechart" class="tableucontainer"></div>
+                        </div>
+                        <div class="row top-buffer" align='center'>
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        Key Takeaway
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Athletics and Swimming are the major events happening
+                                            in
+                                            summer whereas Skiing and Biathlon are the
+                                            major events happening in winters. </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top-buffer" align='center'></div>
+                            <div class="row top-buffer" align='center'></div>
+                        </div>
+                    </div>
+                    <div class="container ">
+                        <div class=" col-md-12">
+                            <div class="card-body">
+                                <p class="card-text">The bubble chart below shows the medals won by each country
+                                    over
+                                    years.</p>
+                                <div id="bubble1" class="tableucontainer"></div>
+                            </div>
+                        </div>
+                        <div class="container ">
+                            <div class=" col-md-12">
+                                <div id="bubble2" class="tableucontainer"></div>
+                            </div>
+                            <div class="row top-buffer" align='center'>
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Key Takeaway
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text">USA seems to be consistently winning major number
+                                                of
+                                                medals. Other than USA, Germany and Russia
+                                                also have more number of medals won.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row top-buffer" align='center'></div>
+                            <div class="row top-buffer" align='center'></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Tab4 -->
+                <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+                    <div class="container ">
+                        <div>
+                            <h3>
+                                Introduction:
+                                <br>
+                                <small class="text-muted">
+                                    <p class="lead text-justify">
+                                        The project discusses the detailed analysis of the evolution of Olympic
+                                        Sports events (1896 to 2016).
+                                    </p>
+                                </small>
+                            </h3>
+
+                            <h3>
+                                About the Dataset:
+                                <br>
+                                <small class="text-muted">
+                                    <p class="lead text-justify">
+                                        The dataset for this project is obtained from Kaggle which was scraped from
+                                        <a href="www.sports-reference.com">www.sports-reference.com</a>. The dataset
+                                        contains information about the medal results, demographic,
+                                        biological information like height, weight, age, etc. of athletes. For the
+                                        analysis, two-dimensional data tables were
+                                        created that correspond with each visualization that included the data to
+                                        only what pertained to the question
+                                        being answered. Each of these data tables were stored into separate CSV
+                                        files that could be read in using d3. All
+                                        data, including the raw files, consolidated structured data, and the summary
+                                        tables, are stored locally.
+                                    </p>
+                                </small>
+                            </h3>
+                            <h3>
+                                Exploratory Data Analysis:
+                                <br>
+                                <small class="text-muted">
+                                    <p class="lead text-justify">
+                                        The preliminary EDA is performed in Excel. The data set contains 271,116
+                                        entries and contains information of 231 NOC’s.
+                                        The height and weight information are missing for 60,171 entries, and age is
+                                        missing for around 700 entries. However,
+                                        other information like age, sex, NOC, medals, etc. is not missing. The data
+                                        is available from 1896 to 2016. Fortunately,
+                                        except for the missing values, the data looks clean for further analysis.
+                                        The final intended tools for visualization and
+                                        analysis are Tableau and D3.js.
+                                    </p>
+                                </small>
+                            </h3>
+                            <h3>
+                                Experimental Analysis and Conclusions:
+                                <br>
+                                <small class="text-muted">
+                                    <p class="lead text-justify">
+                                        From the data visualization it was revealed that the number of athletes
+                                        participating in the modern Olympics Games
+                                        have increased drastically over 1896-2016. The numbers range from 650 in
+                                        1896 to 11,174 in 2016. Similar change is
+                                        observed in the number of participating countries i.e. 16 to 208. It is
+                                        observed that the number of women athletes
+                                        have been increased from 10 to 6000 approximately. With the number of
+                                        increasing nations participating in Olympics
+                                        USA is consistently winning maximum number of medals with 264 medals in 2016
+                                        and around 5600 total number of medals
+                                        till date.
+                                    </p>
+                                    <p class="lead text-justify">
+                                        Most of the facts revealed by the data visualization were as per our
+                                        expectations whereas data also revealed some of
+                                        unexpected results. The number of woman and the number of Nations
+                                        participating in the modern Olympic games are increasing
+                                        over years. Overall, the number of athletes, games, events have been
+                                        increasing over years. USA seems to be almost consistently
+                                        winning major number of medals including year 2016. Considering all the
+                                        above results the project finally concludes that the
+                                        modern Olympic Games are evolving over the years.
+                                    </p>
+                                </small>
+                            </h3>
+                            <h3>
+                                Future Scope:
+                                <br>
+                                <small class="text-muted">
+                                    <p class="lead text-justify">
+                                        To work with athelets health dataset and analyze how athlets have been
+                                        evolving with years.
+                                        The attempt was made to counduct this analysis however with the available
+                                        dataset there were
+                                        no reasult obsereved effectively hence the future work could be to work with
+                                        other athelet
+                                        health related dataset.
+                                    </p>
+                                </small>
+                            </h3>
+                            <h3>
+                                References:
+                                <br>
+                                <small class="text-muted">
+                                    <p class="lead text-justify">
+                                    <ul>
+                                        <li> <a href="https://www.kaggle.com/">https://www.kaggle.com/</a></li>
+                                        <li> <a href="https://www.olympic.org/">https://www.olympic.org/</a></li>
+                                        <li> <a href="https://www.tableau.com/">https://www.tableau.com/</a></li>
+                                        <li> <a
+                                                href="https://www.towardsdatascience.com/">https://www.towardsdatascience.com/</a>
+                                        </li>
+                                        <li> <a href="https://www.medium.com/">https://www.medium.com/ </a></li>
+                                        <li> <a
+                                                href="https://www.d3-graph-gallery.com/backgroundmap/">https://www.d3-graph-gallery.com/backgroundmap/</a>
+                                        </li>
+
+                                    </ul>
+                                    </p>
+                                </small>
+                            </h3>
+                            <br>
+                            <h5>Source Code:
+                                <small class="text-muted">
+                                    <a href="https://github.com/yadavmm30/DATS-6401-Individual-Project-Madhuri-Yadav">Click
+                                        here</a> to view the source code.
+                                </small>
+                            </h5>
+                        </div>
+                        <br>
+                        <hr />
+                        <br>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+
+    <script type="text/javascript">
+        function initViz(divName, url) {
+            var containerDiv = document.getElementById(divName),
+
+                options = {
+                    hideTabs: true,
+                    device: "desktop"
+                };
+            var viz = new tableau.Viz(containerDiv, url, options);
+        }
+
+
+        let linegraph = "https://public.tableau.com/shared/GTNXQZWQQ?:display_count=n&:origin=viz_share_link";
+        let bargraph1 = "https://public.tableau.com/views/Book1_16080557017190/ParticipationOverYearsbasedonGender?:language=en&:display_count=y&:origin=viz_share_link";
+        let bargraph2 = "https://public.tableau.com/views/Book1_16080557017190/Dashboard4?:language=en&:display_count=y&:origin=viz_share_link";
+        let piechart = "https://public.tableau.com/views/Book1_16080557017190/Dashboard10?:language=en&:display_count=y&:origin=viz_share_link";
+        let bubble1 = "https://public.tableau.com/shared/2J6HGZRM9?:display_count=n&:origin=viz_share_link";
+        let bubble2 = "https://public.tableau.com/views/Book1_16080557017190/Dashboard9?:language=en&:display_count=y&:origin=viz_share_link";
+
+        initViz("linegraph", linegraph);
+        initViz("bargraph1", bargraph1);
+        initViz("bargraph2", bargraph2);
+        initViz("piechart", piechart);
+        initViz("bubble1", bubble1);
+        initViz("bubble2", bubble2);
+    </script>
+
+
+
+    <script>
+
+        var inputValue = 2016;
+        var tooltipDiv;
+        var season = 'Summer';
+        var summer_year = ['1992','2012','1900','1952','2000','1996','1924','1948','2008','2016','2004','1984','1972','1988','1960','1928','1976','1980','1964','1904','1908','1896'].sort();
+        var winter_year = ['1924','1928','1932','1936','1948','1952','1956','1960','1964','1968','1972','1976','1980','1984','1988','1992','1994','1998','2002','2006','2010','2014'].sort();
+        var year = summer_year;
+        d3.select("#timeslide").on("input", function () {
+            update(+this.value);
+        });
+
+        d3.select("#season_switch").on("click", function () {
+            if (season == 'Summer')
+                setSeason("Winter");
+            else
+                setSeason("Summer");
+        });
+        function setSeason(value) {
+            console.log(value)
+            if (value == 'Summer') {
+                console.log("Map Shows Summer Olympics data")
+                season = "Summer";
+                year = summer_year;
+
+            } else {
+                console.log("Map Shows Winter Olympics data")
+                season = "Winter";
+                year = winter_year;
+            }
+            update(document.getElementById("timeslide").value);
+        }
+        // update the fill of each SVG of class "incident" with value
+        function update(value) {
+            data.clear()
+            document.getElementById("range").innerHTML = year[value];
+            inputValue = year[value];
+            console.log("New Value")
+            d3.queue()
+                .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+                .defer(d3.csv, "./data/medal_data.csv", function (d) {
+                    if (d.Year == inputValue && d.Season == season)
+                        // console.log(JSON.stringify(d))
+                        data.set(d.NOC, d.medal);
+                })
+                .await(ready);
+        }
+        // The svg
+        var svg = d3.select("svg"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+        // Map and projection
+        var path = d3.geoPath();
+        var projection = d3.geoMercator()
+            .scale(100)
+            .center([0, 20])
+            .translate([width / 2, height / 2]);
+        // Data and color scale
+        var data = d3.map();
+        var colorScale = d3.scaleThreshold()
+            .domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500])
+            .range(d3.schemeBlues[9]);
+
+        // Load external data and boot
+        d3.queue()
+            .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+            .defer(d3.csv, "./data/medal_data.csv", function (d) {
+                if (d.Year == inputValue)
+                    // console.log(JSON.stringify(d))
+                    data.set(d.NOC, +d.medal);
+            })
+            .await(ready);
+
+        function ready(error, topo) {
+
+            let mouseOver = function (d) {
+
+
+                d3.select('body').selectAll('div.tooltip').remove();
+                // Append tooltip
+                tooltipDiv = d3.select('body').append('div').attr('class', 'tooltip');
+                var absoluteMousePos = d3.mouse(d3.select('body').node());
+                tooltipDiv.style('left', (absoluteMousePos[0] + 10) + 'px')
+                    .style('top', (absoluteMousePos[1] - 15) + 'px')
+                    .style('position', 'absolute')
+                    .style('z-index', 1001);
+                // d3.selectAll(".Country")
+                //   .transition()
+                //   .duration(200)
+                //   .style("opacity", .5)
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("stroke", "black")
+            }
+
+            let mouseLeave = function (d) {
+                // d3.selectAll(".Country")
+                //   .transition()
+                //   .duration(200)
+                //   .style("opacity", .8)
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .style("stroke", "transparent")
+                tooltipDiv.remove();
+            }
+
+            // Draw the map
+            svg.append("g")
+                .selectAll("path")
+                .data(topo.features)
+                .enter()
+                .append("path")
+                // draw each country
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                // set the color of each country
+                .attr("fill", function (d) {
+                    d.total = data.get(d.id) || 0;
+                    return colorScale(d.total);
+                })
+                .style("stroke", "transparent")
+                .attr("class", function (d) { return "Country" })
+                .style("opacity", .8)
+                .on("mouseover", mouseOver)
+                .on("mouseleave", mouseLeave)
+        }
+
+    </script>
+</body>
+
+</html>
