@@ -491,7 +491,7 @@
             console.log("New Value")
             d3.queue()
                 .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-                .defer(d3.csv, "../medal_data.csv", function (d) {
+                .defer(d3.csv, "https://raw.githubusercontent.com/yadavmm30/DATS-6401-Final-Project-Madhuri-Yadav/main/data/medal_data.csv", function (d) {
                     if (d.Year == inputValue && d.Season == season)
                         // console.log(JSON.stringify(d))
                         data.set(d.NOC, d.medal);
